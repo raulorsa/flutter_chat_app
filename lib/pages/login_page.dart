@@ -61,7 +61,9 @@ class __FormState extends State<_Form> {
 
             SizedBox(height: 20,),
 
-            BotonAzul(texto: 'Entrar', onPressed: (){},),
+            BotonAzul(texto: 'Entrar', onPressed: (){
+              Navigator.pushReplacementNamed(context, 'usuarios');
+            },),
 
           ],
         ),
