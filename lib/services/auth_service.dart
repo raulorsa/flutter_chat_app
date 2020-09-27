@@ -21,15 +21,15 @@ class AuthService with ChangeNotifier{
 
 
   //Getters del soken
-  static Future<void> getToken() async {
+  static Future<String> getToken() async {
     final _storage = new FlutterSecureStorage();
     final token = await _storage.read(key: 'token');
     return token;
   }
 
-  static Future<String> deleteToken() async {
+  static Future<void> deleteToken() async {
     final _storage = new FlutterSecureStorage();
-    final token = await _storage.delete(key: 'token');
+    await _storage.delete(key: 'token');
   }
 
 
@@ -42,11 +42,10 @@ class AuthService with ChangeNotifier{
       'password' : password
     };
 
-    final resp = await http.post('${Environment.apiUrl}/login', 
+    final resp = await http.post('${ Environment.apiUrl }/login', 
       body: jsonEncode(data),
-      headers:{
+      headers: {
         'Content-Type': 'application/json'
-
       }
     );
 
@@ -55,7 +54,7 @@ class AuthService with ChangeNotifier{
       final loginResponse = loginResponseFromJson(resp.body);
       this.usuario = loginResponse.usuario;
 
-      this._guardarToken(loginResponse.token);
+      await this._guardarToken(loginResponse.token);
 
       return true;
     } else {
@@ -89,7 +88,7 @@ class AuthService with ChangeNotifier{
       final loginResponse = loginResponseFromJson(resp.body);
       this.usuario = loginResponse.usuario;
 
-      this._guardarToken(loginResponse.token);
+      await this._guardarToken(loginResponse.token);
 
       return true;
     } else {
@@ -100,14 +99,13 @@ class AuthService with ChangeNotifier{
   }
 
   Future<bool> isLoggedIn() async {
-    final token = await this._storage.read(key: 'token');
-    //Validacion
 
-     final resp = await http.get('${Environment.apiUrl}/login/renew', 
-      headers:{
+    final token = await this._storage.read(key: 'token');
+
+    final resp = await http.get('${ Environment.apiUrl }/login/renew', 
+      headers: { 
         'Content-Type': 'application/json',
         'x-token': token
-
       }
     );
 
